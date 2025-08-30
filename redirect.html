@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniPost - Authentication Redirect</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 30px;
+            border: 2px solid var(--neon-blue);
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .auth-title {
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-green);
+            margin-bottom: 20px;
+        }
+        .auth-message {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        .auth-status {
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-pink);
+            margin: 20px 0;
+        }
+        .auth-code {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            color: var(--neon-blue);
+            margin: 20px 0;
+            word-break: break-all;
+        }
+        .loading {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--neon-blue);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // Function to get URL parameters
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            for (const [key, value] of urlParams.entries()) {
+                params[key] = value;
+            }
+
+            return params;
+        }
+
+        // Function to handle the OAuth redirect
+        function handleRedirect() {
+            const params = getUrlParams();
+            const statusElement = document.getElementById('auth-status');
+            const codeElement = document.getElementById('auth-code');
+            const loadingElement = document.getElementById('loading');
+
+            // Check if there's a code parameter (successful auth)
+            if (params.code) {
+                statusElement.textContent = 'Authentication Successful';
+                statusElement.style.color = 'var(--neon-green)';
+                codeElement.textContent = `Authorization Code: ${params.code}`;
+                codeElement.style.display = 'block';
+
+                // You can add code here to send the auth code to your backend
+                // or store it temporarily in localStorage
+
+                // For demonstration, we'll just show a message
+                setTimeout(() => {
+                    document.getElementById('auth-message').textContent =
+                        'You can now close this window and return to the application.';
+                    loadingElement.style.display = 'none';
+                }, 2000);
+            }
+            // Check if there's an error parameter
+            else if (params.error) {
+                statusElement.textContent = 'Authentication Failed';
+                statusElement.style.color = 'var(--neon-pink)';
+                codeElement.textContent = `Error: ${params.error}`;
+                codeElement.style.display = 'block';
+                loadingElement.style.display = 'none';
+            }
+            // No parameters, show default message
+            else {
+                statusElement.textContent = 'Waiting for Authentication...';
+                codeElement.style.display = 'none';
+            }
+        }
+
+        // Run when the page loads
+        window.onload = handleRedirect;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <h1 class="auth-title">OMNIPOST AUTHENTICATION</h1>
+            <p class="auth-message" id="auth-message">Processing authentication response...</p>
+            <div class="loading" id="loading"></div>
+            <h2 class="auth-status" id="auth-status">Authenticating...</h2>
+            <pre class="auth-code" id="auth-code" style="display: none;"></pre>
+        </div>
+    </div>
+
+    <div class="bg-animation">
+        <div class="grid-lines"></div>
+        <div class="particles"></div>
+    </div>
+</body>
+</html>
